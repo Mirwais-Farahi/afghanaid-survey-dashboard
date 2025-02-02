@@ -160,7 +160,7 @@ def data_quality_review():
 
 def sideBar():
     with st.sidebar:
-        st.image("data/logo.png", use_column_width=True)
+        st.image("data/logo.png", use_container_width=True)
         selected = option_menu(
             menu_title="Projects",
             options=["AfghanAid CARL Baseline", "AfghanAid Observation Checklist"],
