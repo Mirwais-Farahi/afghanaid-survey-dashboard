@@ -9,7 +9,7 @@ kobo = KoboExtractor(KOBO_TOKEN, 'https://eu.kobotoolbox.org/api/v2')
 def load_dataset(option, submitted_after):
     asset_uids = {
         "AfghanAid CARL Baseline": "aPykjh6GrHZr4SEdkWCHE3",  # Household Survey Form
-        "AfghanAid Observation Checklist": "aAGhH3cyoF59wFK3gHiRxg",  # Household Survey Form
+        "AfghanAid Observation Checklist": "aAGhH3cyoF59wFK3gHiRxg",  # Obs Checklist Survey Form
     }
 
     asset_uid = asset_uids.get(option)
