@@ -66,9 +66,8 @@ def tracker():
                 "Male": sum(1 for item in filtered_data if item.get("group_wl8ye67/Gender_of_Respondent") == "male"),
                 "Female": sum(1 for item in filtered_data if item.get("group_wl8ye67/Gender_of_Respondent") == "female"),
             }
-        total_2_mean = filtered_data[selected_columns[0]].mean() if len(selected_columns) > 0 else 0
 
-        total1, total2, total3, total4 = st.columns(4, gap='small')
+        total1, total2= st.columns(2, gap='small')
         with total1:
             st.metric(label="Total Surveys", value=f"{total_1:,.0f}", help="Total Collected Surveys")
         with total2:
