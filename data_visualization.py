@@ -75,6 +75,7 @@ def plot_boxplot(df, column):
     Function to plot a box-plot for a selected numeric column with enhanced design and readability.
     """
     if column:
+        
         # Sort the DataFrame by the selected column
         df = df.sort_values(by=column)
 
@@ -111,13 +112,8 @@ def plot_boxplot(df, column):
 
         # Display the outliers in Streamlit
         if not outliers_df.empty:
-            # Select only columns from the first till the passed column, along with `_id`
-            selected_columns = list(df.columns[:df.columns.get_loc(column) + 1])  # Get columns up to `column`
-            if '_id' in df.columns:
-                selected_columns.insert(0, '_id')  # Ensure `_id` is included if present
-
             st.write(f"Detected Outliers in '{column}':")
-            st.dataframe(outliers_df[selected_columns])  # Display filtered DataFrame
+            st.dataframe(outliers_df)  # Display the outliers DataFrame
         else:
             st.write(f"No outliers detected in '{column}'.")
 
