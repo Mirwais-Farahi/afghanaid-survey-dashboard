@@ -62,10 +62,17 @@ def tracker():
         selected_columns = st.multiselect("Select Columns for Statistical Calculation:", filtered_data.dropna(axis=1, how='all').columns.tolist(), default=[])
 
         total_1 = len(filtered_data) if len(filtered_data) > 0 else 0
-        total_gender = {
-                "Male": sum(1 for item in filtered_data if item.get("group_wl8ye67/Gender_of_Respondent") == "male"),
-                "Female": sum(1 for item in filtered_data if item.get("group_wl8ye67/Gender_of_Respondent") == "female"),
+        
+        if "group_wl8ye67/Gender_of_Respondent" in filtered_data.columns:
+            total_gender = filtered_data["group_wl8ye67/Gender_of_Respondent"].str.lower().value_counts().to_dict()
+            
+            # Ensure we return 0 if a gender is missing
+            total_gender = {
+                "Male": total_gender.get("male", 0),
+                "Female": total_gender.get("female", 0)
             }
+        else:
+            total_gender = {"Male": 0, "Female": 0}
 
         total1, total2= st.columns(2, gap='small')
         with total1:
