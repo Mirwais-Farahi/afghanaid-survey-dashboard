@@ -5,7 +5,7 @@ from data_loader import load_dataset
 from gis_analysis import add_location_columns
 from data_visualization import group_by_visualize_and_download, display_group_by_table, plot_boxplot, plot_time_series, show_eligibility_table, visualize_eligibility
 
-from data_analysis import calculate_statistics, filter_data, apply_filters, filter_short_surveys, get_unique_responses, filter_responses
+from data_analysis import filter_data, apply_filters, filter_short_surveys, get_unique_responses, filter_responses
 from streamlit_extras.metric_cards import style_metric_cards
 from datetime import datetime
 
@@ -62,17 +62,17 @@ def tracker():
         selected_columns = st.multiselect("Select Columns for Statistical Calculation:", filtered_data.dropna(axis=1, how='all').columns.tolist(), default=[])
 
         total_1 = len(filtered_data) if len(filtered_data) > 0 else 0
-        total_2_mean, total_2_median, total_3_min, total_3_max, total_4 = calculate_statistics(filtered_data, selected_columns)
+        total_gender = {
+                "Male": sum(1 for item in filtered_data if item.get("group_wl8ye67/Gender_of_Respondent") == "male"),
+                "Female": sum(1 for item in filtered_data if item.get("group_wl8ye67/Gender_of_Respondent") == "female"),
+            }
+        total_2_mean = filtered_data[selected_columns[0]].mean() if len(selected_columns) > 0 else 0
 
         total1, total2, total3, total4 = st.columns(4, gap='small')
         with total1:
             st.metric(label="Total Surveys", value=f"{total_1:,.0f}", help="Total Collected Surveys")
         with total2:
-            st.metric(label="Mean / Median", value=f"{total_2_mean:,.0f} / {total_2_median:,.0f}", help=selected_columns[0] if len(selected_columns) > 0 else "No Columns Selected")
-        with total3:
-            st.metric(label="Min / Max", value=f"{total_3_min:,.0f} / {total_3_max:,.0f}", help=selected_columns[1] if len(selected_columns) > 1 else "No Columns Selected")
-        with total4:
-            st.metric(label="Number of Outliers", value=f"{total_4:,.0f}", help=selected_columns[2] if len(selected_columns) > 2 else "No Columns Selected")
+            st.metric(label="Male / Female", value=f"{total_gender['Male']} / {total_gender['Female']}", help="Gender of Respondent")
 
         style_metric_cards(background_color="#FFFFFF", border_left_color="#686664", border_color="#000000", box_shadow="#F71938")
 
