@@ -63,11 +63,9 @@ def identify_outliers(df, column):
 
     return outliers
 
-import pandas as pd
-
 def filter_short_surveys(df, start_column, end_column):
     """
-    Filters surveys that took less than 30 minutes.
+    Filters surveys that took less than 20 minutes.
 
     Parameters:
     df (DataFrame): The DataFrame containing survey data.
@@ -82,7 +80,7 @@ def filter_short_surveys(df, start_column, end_column):
     if start_column not in df.columns or end_column not in df.columns:
         raise ValueError(f"Columns '{start_column}' or '{end_column}' not found in DataFrame.")
 
-    # Strip spaces and convert to datetime (handling timezone properly)
+    # Convert to datetime with proper timezone handling
     df[start_column] = pd.to_datetime(df[start_column], errors='coerce', utc=True)
     df[end_column] = pd.to_datetime(df[end_column], errors='coerce', utc=True)
 
@@ -96,17 +94,16 @@ def filter_short_surveys(df, start_column, end_column):
     df[start_column] = df[start_column].dt.tz_convert(None)
     df[end_column] = df[end_column].dt.tz_convert(None)
 
-    # Calculate duration in minutes
-    df['duration'] = (df[end_column] - df[start_column]).dt.total_seconds() / 60.0
+    # Calculate duration in minutes (use absolute value to correct negative durations)
+    df['duration'] = abs((df[end_column] - df[start_column]).dt.total_seconds() / 60.0)
 
-    # Filter surveys that took less than 30 minutes
-    short_surveys = df[df['duration'] < 30]
+    # Filter surveys that took less than 20 minutes
+    short_surveys = df[df['duration'] < 20]
 
     # Remove columns that contain only null values
     filtered_df = short_surveys.dropna(axis=1, how='all')
 
     return filtered_df
-
 
 # Function to get unique responses for a selected question
 def get_unique_responses(df, question):
