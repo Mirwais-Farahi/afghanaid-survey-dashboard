@@ -63,33 +63,50 @@ def identify_outliers(df, column):
 
     return outliers
 
+import pandas as pd
+
 def filter_short_surveys(df, start_column, end_column):
     """
-    Function to calculate the duration of surveys and filter those that took less than 25 minutes,
-    returning all columns except those that contain only null values, along with the duration column.
-    
+    Filters surveys that took less than 30 minutes.
+
     Parameters:
     df (DataFrame): The DataFrame containing survey data.
-    start_column (str): The name of the column with start dates.
-    end_column (str): The name of the column with end dates.
-    
+    start_column (str): The name of the column with start times.
+    end_column (str): The name of the column with end times.
+
     Returns:
-    DataFrame: A DataFrame with all columns except those containing only null values, and the duration column.
+    DataFrame: A filtered DataFrame.
     """
-    # Ensure the start and end columns are in datetime format
-    df[start_column] = pd.to_datetime(df[start_column], errors='coerce').dt.tz_localize(None)
-    df[end_column] = pd.to_datetime(df[end_column], errors='coerce').dt.tz_localize(None)
+
+    # Ensure columns exist
+    if start_column not in df.columns or end_column not in df.columns:
+        raise ValueError(f"Columns '{start_column}' or '{end_column}' not found in DataFrame.")
+
+    # Strip spaces and convert to datetime (handling timezone properly)
+    df[start_column] = pd.to_datetime(df[start_column], errors='coerce', utc=True)
+    df[end_column] = pd.to_datetime(df[end_column], errors='coerce', utc=True)
+
+    # Check if conversion was successful
+    if df[start_column].isna().all():
+        raise ValueError(f"Column '{start_column}' could not be converted to datetime. Check data for invalid formats.")
+    if df[end_column].isna().all():
+        raise ValueError(f"Column '{end_column}' could not be converted to datetime. Check data for invalid formats.")
+
+    # Convert to local timezone (remove UTC awareness)
+    df[start_column] = df[start_column].dt.tz_convert(None)
+    df[end_column] = df[end_column].dt.tz_convert(None)
 
     # Calculate duration in minutes
     df['duration'] = (df[end_column] - df[start_column]).dt.total_seconds() / 60.0
 
     # Filter surveys that took less than 30 minutes
-    short_surveys = df[abs(df['duration']) < 30]
+    short_surveys = df[df['duration'] < 30]
 
     # Remove columns that contain only null values
     filtered_df = short_surveys.dropna(axis=1, how='all')
 
     return filtered_df
+
 
 # Function to get unique responses for a selected question
 def get_unique_responses(df, question):
