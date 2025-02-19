@@ -98,7 +98,7 @@ def filter_short_surveys(df, start_column, end_column):
     df['duration'] = abs((df[end_column] - df[start_column]).dt.total_seconds() / 60.0)
 
     # Filter surveys that took less than 20 minutes
-    short_surveys = df[df['duration'] < 20]
+    short_surveys = df[df['duration'] < 30]
 
     # Remove columns that contain only null values
     filtered_df = short_surveys.dropna(axis=1, how='all')
